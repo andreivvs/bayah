@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_USER: bayhan
+      POSTGRES_PASSWORD: bayhanpass
+      POSTGRES_DB: bayhan_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./backend/prisma/data:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    command: yarn dev
+    ports:
+      - "4000:4000"
+    environment:
+      DATABASE_URL: postgresql://postgres.hzygydetmplfrgnligsa:KQy1wE2LM55ZtBY@aws-1-eu-north-1.pooler.supabase.com:5432/postgres
+      TELEGRAM_BOT_TOKEN: 8327779189:AAFNjcwhpCYfai2Qa-JqsprzjyCH4PP-lj4
+    depends_on:
+      - db
+
+  frontend:
+    build: ./frontend
+    command: yarn start
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
